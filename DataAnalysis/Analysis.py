@@ -40,7 +40,13 @@ class Analysis(threading.Thread):
         else:
             self.post_dict[post_time] = dict()
             self.post_dict[post_time][post_tieba] = 1
-            
+
+    def get_rule_dict(self):
+        return self.rule_dict
+
+    def get_post_dict(self):
+        return self.post_dict
+
     def run(self):
         if self.queue is None:
             raise NameError, 'Analysis module need a queue to read data!'
