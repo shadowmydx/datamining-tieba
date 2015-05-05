@@ -35,6 +35,9 @@ class Rule:
     def get_description(self):
         return self.description
 
+    def judge_input(self, data_item):
+        return True
+
 
 class ReRule(Rule):
 

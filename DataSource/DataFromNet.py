@@ -49,7 +49,8 @@ class FindingPart(threading.Thread):
                 item_string = item.__str__()
                 data_item = DataItem.DataItem(item_string)
                 self.put_data_to_queue(data_item)
-        self.queue.join()
+        for queue in self.queues:
+            queue.join()
         return True  # which means one url level task is over.
 
     def gen_hide_url(self):
