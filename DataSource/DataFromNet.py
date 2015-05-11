@@ -4,30 +4,28 @@ __author__ = 'wmydx'
 import urllib2
 import threading
 import re
-
 from bs4 import BeautifulSoup
 
 import DataItem
 from DataAnalysis import Rule
+from FinishFlag import Finish
 
 
 class FindingPart(threading.Thread):
     # 时间顺序还是逆序，由上层处理。
-    def __init__(self, start_url):
+    def __init__(self, start_url, queues, locks):
         threading.Thread.__init__(self)
         self.rule_list = Rule.Rules().get_rule_list()
         self.url = start_url
         self.if_repeat = ''  # 使用该变量来标记动态产生的百度地址是否重复
         self.host = r'http://tieba.baidu.com'
         self.pattern = re.compile(r'pn=(?P<page>\d+)')
-        self.queues = None
+        self.queues = queues
+        self.locks = locks
 
     def get_html_content(self):
         content = urllib2.urlopen(self.url).read()
         return content
-
-    def setup_blocking_queue(self, queues):
-        self.queues = queues
 
     def run(self):
         if self.queues is None:
@@ -49,9 +47,8 @@ class FindingPart(threading.Thread):
                 item_string = item.__str__()
                 data_item = DataItem.DataItem(item_string)
                 self.put_data_to_queue(data_item)
-        for queue in self.queues:
-            queue.join()
-        return True  # which means one url level task is over.
+        Finish.Finish(self.queues[0], self.locks[0]).setDaemon(True).start()
+        Finish.Finish(self.queues[1], self.locks[1]).setDaemon(True).start()
 
     def gen_hide_url(self):
         pages = self.pattern.search(self.url)

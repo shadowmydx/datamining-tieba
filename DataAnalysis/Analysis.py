@@ -7,17 +7,14 @@ import threading
 
 class Analysis(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, queue):
         threading.Thread.__init__(self)
-        self.queue = None
+        self.queue = queue
         self.rule_list = Rules().get_rule_list()
         self.rule_dict = dict()
         for rule in self.rule_list:
             self.rule_dict[rule.get_description()] = []
         self.post_dict = dict()
-
-    def setup_blocking_queue(self, queue):
-        self.queue = queue
 
     def get_data_item(self):
         data_item = self.queue.get()

@@ -8,9 +8,9 @@ import threading
 
 class DataSaver(threading.Thread):
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, queue):
         threading.Thread.__init__(self)
-        self.queue = None
+        self.queue = queue
         self.conn = sqlite3.connect('LocalData/' + user_id + '.db')
         self.init_all_table()
 
@@ -27,9 +27,6 @@ class DataSaver(threading.Thread):
         )
         '''
         local_cur.execute(create_post)
-
-    def setup_blocking_queue(self, queue):
-        self.queue = queue
 
     def get_data_item(self):
         data_item = self.queue.get()
