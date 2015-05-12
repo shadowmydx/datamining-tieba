@@ -23,7 +23,7 @@ class Analysis(threading.Thread):
     def parse_rule(self, data_item):
         for rule in self.rule_list:
             if rule.judge_input(data_item):
-                self.rule_dict[rule.rule.get_description()].append(data_item)
+                self.rule_dict[rule.get_description()].append(data_item)
 
     def count_post(self, data_item):
         post_time = data_item.get_item_content()['time']
@@ -33,7 +33,7 @@ class Analysis(threading.Thread):
             if post_tieba in self.post_dict[post_time].keys():
                 self.post_dict[post_time][post_tieba] += 1
             else:
-                self.post_dict[post_tieba][post_tieba] = 1
+                self.post_dict[post_time][post_tieba] = 1
         else:
             self.post_dict[post_time] = dict()
             self.post_dict[post_time][post_tieba] = 1

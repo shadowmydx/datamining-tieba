@@ -20,6 +20,17 @@ class DataItem:
         self.result = {}
         self.gen_all_content()
 
+    def __str__(self):
+        result_str = '''
+        主贴题目： %(title)s\n
+        发言内容： %(content)s\n
+        所在贴吧： %(tieba)s\n
+        发言时间： %(time)s\n
+        发言地址： %(addr)s\n
+        作者： %(author)s\n
+        ''' % self.result
+        return result_str
+
     def get_item_content(self):
         return self.result
 
@@ -36,7 +47,13 @@ class DataItem:
         return html.select('.p_title > .bluelink')[0].text
 
     def gen_content_from_html(self, html):
-        return html.select('.p_content')[0].text
+        local_str = html.select('.p_content')[0].text
+        index1 = local_str.find('回复')
+        index2 = local_str.find(':')
+        if index1 != -1:
+            if index2 != -1:
+                local_str = local_str[index2 + 1:]
+        return local_str
 
     def gen_tieba_from_html(self, html):
         return html.select('.p_forum > .p_violet')[0].text

@@ -73,7 +73,7 @@ class NumberRule(ReRule):
     def __init__(self):
         ReRule.__init__(self)
         self.description = 'Number Rule'
-        self.pattern = re.compile(r'\d\d(\d+)')
+        self.pattern = re.compile(r'\d\d\d\d(\d+)')
 
 
 class IpAddrRule(ReRule):
@@ -105,7 +105,7 @@ class EmailRule(ReRule):
     def __init__(self):
         ReRule.__init__(self)
         self.description = 'Email Rule'
-        self.pattern = re.compile(r'([^@]+)@([^@]+)')
+        self.pattern = re.compile(r'([^@]+)@([^@]+)[.]([^@]+)')
 
 
 class UniversityRule(StrRule):

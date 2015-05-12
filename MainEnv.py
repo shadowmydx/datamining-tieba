@@ -1,26 +1,16 @@
 # -*- coding:utf8 -*-
 __author__ = 'wmydx'
 
-import urllib
-import Queue
+from StartRoot import StartFromNet
 
 
 class MainEnv:
 
-    def __init__(self, user):
-        self.user = user
-        self.start_url = r'http://tieba.baidu.com/f/search/ures?ie=utf-8&kw=&qw=&rn=10&un=[userid]&sm=1'
-        self.end_url = r'http://tieba.baidu.com/f/search/ures?ie=utf-8&kw=&qw=&rn=10&un=[userid]&sm=0'
-        self.gen_init_url()
+    def __init__(self):
+        pass
 
-    def gen_init_url(self):
-        user_id = urllib.quote(self.user)
-        self.start_url = self.start_url.replace('[userid]', user_id)
-        self.end_url = self.end_url.replace('[userid]', user_id)
-        print self.end_url
-        print self.start_url
+    def run(self):
+        front_thread = StartFromNet.StartFromNet('wmydx')
+        front_thread.start()
 
-
-if __name__ == '__main__':
-    test = MainEnv('wmydx')
-    test.gen_init_url()
+MainEnv().run()

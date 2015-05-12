@@ -4,6 +4,7 @@ __author__ = 'wmydx'
 import threading
 import Queue
 import urllib
+import sys
 from DataSource import DataFromNet
 from DataAnalysis import Analysis
 from DataBase import DataSaver
@@ -22,6 +23,8 @@ class StartFromNet(threading.Thread):
         self.gen_init_url()
         self.analysis_queue = Queue.Queue(40)
         self.save_data_queue = Queue.Queue(40)
+        reload(sys)
+        sys.setdefaultencoding('utf-8')
         # self.setup_all_thread()
 
     def gen_init_url(self):
@@ -35,15 +38,20 @@ class StartFromNet(threading.Thread):
         self.setup_data_saver()
 
     def setup_data_source(self, url):
-        DataFromNet.FindingPart(url, (self.analysis_queue, self.save_data_queue),
-                                (self.lock_for_analysis, self.lock_for_save)).setDaemon(True).start()
+        local_data = DataFromNet.FindingPart(url, (self.analysis_queue, self.save_data_queue),
+                                             (self.lock_for_analysis, self.lock_for_save))
+        local_data.setDaemon(True)
+        local_data.start()
 
     def setup_analysis(self):
         self.analysis_thread = Analysis.Analysis(self.analysis_queue)
-        self.analysis_thread.setDaemon(True).start()
+        self.analysis_thread.setDaemon(True)
+        self.analysis_thread.start()
 
     def setup_data_saver(self):
-        DataSaver.DataSaver(self.user, self.save_data_queue).setDaemon(True).start()
+        local_saver = DataSaver.DataSaver(self.user, self.save_data_queue)
+        local_saver.setDaemon(True)
+        local_saver.start()
 
     def run(self):
         self.lock_for_save.acquire()
@@ -51,37 +59,38 @@ class StartFromNet(threading.Thread):
         self.setup_all_thread(self.start_url)
         self.lock_for_analysis.wait()
         self.lock_for_save.wait()
-
         self.gen_report('start')
-
+        print 'start is over.'
         self.lock_for_save.acquire()
         self.lock_for_analysis.acquire()
-        self.setup_all_thread(self.end_url)
+        self.setup_data_source(self.end_url)
         self.lock_for_analysis.wait()
         self.lock_for_save.wait()
-
         self.gen_report('end')
+        print 'end is over.'
+        #  此时，分析模块和存储模块还在卡着，所以只需要重新设置数据提供模块
 
     def gen_report(self, filename):
-        self.gen_rule_report(filename)
         self.gen_count_report(filename)
+        self.gen_rule_report(filename)
 
     def gen_count_report(self, filename):
         result_str = ''
-        f = open('../Report/' + self.user + '_' + filename, 'a+')
+        f = open('./Report/' + self.user + '_' + filename, 'ab')
         year_dict = self.analysis_thread.get_post_dict()
         for year in year_dict.keys():
-            result_str += 'In ' + year + 'year:\n'
+            result_str += 'In ' + year + ' year:\n'
             tieba_dict = year_dict[year]
             for tieba in tieba_dict.keys():
-                result_str += '  In ' + tieba + ' there is ' + tieba_dict[tieba] + ' posts.\n'
+                result_str += '  In ' + tieba + ' there are ' + str(tieba_dict[tieba]) + ' posts.\n'
             result_str += '\n'
+        print result_str
         f.write(result_str)
         f.close()
 
     def gen_rule_report(self, filename):
         result_str = ''
-        f = open('../Report/' + self.user + '_' + filename, 'a+')
+        f = open('./Report/' + self.user + '_' + filename, 'ab')
         rules = self.analysis_thread.get_rule_dict()
         for rule in rules:
             result_str += rule + ' rules：\n'
@@ -90,6 +99,5 @@ class StartFromNet(threading.Thread):
             result_str += '\n'
         f.write(result_str)
         f.close()
-
 
 

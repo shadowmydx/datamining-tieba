@@ -11,8 +11,8 @@ class DataSaver(threading.Thread):
     def __init__(self, user_id, queue):
         threading.Thread.__init__(self)
         self.queue = queue
-        self.conn = sqlite3.connect('LocalData/' + user_id + '.db')
-        self.init_all_table()
+        self.user_id = user_id
+        self.conn = None
 
     def init_all_table(self):
         local_cur = self.conn.cursor()
@@ -23,8 +23,8 @@ class DataSaver(threading.Thread):
             tieba TEXT,
             time TEXT,
             addr TEXT PRIMARY KEY NOT NULL,
-            author TEXT,
-        )
+            author TEXT
+        );
         '''
         local_cur.execute(create_post)
 
@@ -37,17 +37,22 @@ class DataSaver(threading.Thread):
         local_dict = data_item.get_item_content()
         insert_data = '''
             INSERT INTO S_POST VALUES (
-                %(title)s,
-                %(content)s,
-                %(tieba)s,
-                %(time)s,
-                %(addr)s,
-                %(author)s
-            )
+                '%(title)s',
+                '%(content)s',
+                '%(tieba)s',
+                '%(time)s',
+                '%(addr)s',
+                '%(author)s'
+            );
         ''' % local_dict
-        local_cur.execute(insert_data)
+        try:
+            local_cur.execute(insert_data)
+        except sqlite3.IntegrityError:
+            pass
 
     def run(self):
+        self.conn = sqlite3.connect('./LocalData/' + self.user_id + '.db')
+        self.init_all_table()
         while True:
             data_item = self.get_data_item()
             self.store_data_item(data_item)

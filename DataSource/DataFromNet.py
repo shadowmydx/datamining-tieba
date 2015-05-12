@@ -1,4 +1,4 @@
-# -*- coding:utf8 -*-
+# -*- coding: utf-8 -*-
 __author__ = 'wmydx'
 
 import urllib2
@@ -28,9 +28,11 @@ class FindingPart(threading.Thread):
         return content
 
     def run(self):
+        count = 1
         if self.queues is None:
             raise NameError, 'U have not setup queue yet!'
         while True:
+            print 'start a new ' + str(count) + ' page..'
             html = self.get_html_content()
             html = BeautifulSoup(html, 'html5')  # http://stackoverflow.com/questions/16316793/beautifulsoup-lost-nodes
             try:
@@ -38,7 +40,10 @@ class FindingPart(threading.Thread):
             except IndexError:
                 self.url = self.gen_hide_url()
             item_list = html.find_all('div', class_='s_post')
-            item_string = item_list[0].__str__()
+            try:
+                item_string = item_list[0].__str__()
+            except IndexError:
+                break
             if item_string == self.if_repeat:
                 break
             else:
@@ -47,8 +52,13 @@ class FindingPart(threading.Thread):
                 item_string = item.__str__()
                 data_item = DataItem.DataItem(item_string)
                 self.put_data_to_queue(data_item)
-        Finish.Finish(self.queues[0], self.locks[0]).setDaemon(True).start()
-        Finish.Finish(self.queues[1], self.locks[1]).setDaemon(True).start()
+            count += 1
+        finish1 = Finish.Finish(self.queues[0], self.locks[0])
+        finish1.setDaemon(True)
+        finish1.start()
+        finish2 = Finish.Finish(self.queues[1], self.locks[1])
+        finish2.setDaemon(True)
+        finish2.start()
 
     def gen_hide_url(self):
         pages = self.pattern.search(self.url)
@@ -68,7 +78,4 @@ class FindingPart(threading.Thread):
         for i in local_dict:
             print 'dict[%s]=' % i, local_dict[i]
 
-if __name__ == '__main__':
-    test = FindingPart(r'http://tieba.baidu.com/f/search/ures?kw=&qw=&rn=10&un=wmydx&only_thread=&sm=1&sd=&ed=&ie=gbk&pn=72')
-    test.run()
 
