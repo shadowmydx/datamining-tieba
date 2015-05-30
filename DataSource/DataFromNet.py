@@ -80,7 +80,7 @@ class FindingPart(threading.Thread):
         #         show_item(item)
         # for queue in self.queues:
         #     queue.put(item)
-        self.queue.put(item, 1)
+        self.queue.put(item)
 
     @staticmethod
     def show_item(item):

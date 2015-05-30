@@ -17,7 +17,7 @@ class Analysis(threading.Thread):
         self.post_dict = dict()
 
     def get_data_item(self):
-        data_item = self.queue.get(1)
+        data_item = self.queue.get()
         return data_item
 
     def parse_rule(self, data_item):

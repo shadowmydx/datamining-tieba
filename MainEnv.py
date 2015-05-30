@@ -11,7 +11,7 @@ class MainEnv:
 
     @staticmethod
     def run():
-        front_thread = StartFromNet.StartFromNet('')
+        front_thread = StartFromNet.StartFromNet('二吧丧尸')
         front_thread.run()
 
 MainEnv.run()

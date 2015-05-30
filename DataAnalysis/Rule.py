@@ -50,9 +50,9 @@ class ReRule(Rule):
         local_res = self.pattern.search(local_content['title'])
         if local_res:
             return True
-        local_res = self.pattern.search(local_content['tieba'])
-        if local_res:
-            return True
+        # local_res = self.pattern.search(local_content['tieba'])
+        # if local_res:
+        #     return True
         return False
 
 
@@ -67,9 +67,9 @@ class StrRule(Rule):
             local_res = local_content['title'].find(key)
             if local_res != -1:
                 return True
-            local_res = local_content['tieba'].find(key)
-            if local_res != -1:
-                return True
+            # local_res = local_content['tieba'].find(key)
+            # if local_res != -1:
+            #     return True
             return False
 
 
@@ -118,7 +118,7 @@ class UniversityRule(StrRule):
     def __init__(self):
         StrRule.__init__(self)
         self.description = 'University Rule'
-        self.pattern = [u'大学', u'考研', u'论文', u'职校', u'报考', u'高考', u'本科', u'硕士', u'博士', u'专科', u'职高']
+        self.pattern = [u'学院', u'大学', u'考研', u'论文', u'职校', u'报考', u'高考', u'本科', u'硕士', u'博士', u'专科', u'职高']
 
 
 class SchoolRule(StrRule):

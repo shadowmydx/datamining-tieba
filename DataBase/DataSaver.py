@@ -13,6 +13,7 @@ class DataSaver(threading.Thread):
         self.consume_queue = consume_queue
         self.producer_queue = producer_queue
         self.user_id = user_id
+        self.all_post = 0
         self.conn = None
         self.working = threading.Event()
         self.working.set()
@@ -32,7 +33,7 @@ class DataSaver(threading.Thread):
         local_cur.execute(create_post)
 
     def get_data_item(self):
-        data_item = self.consume_queue.get(1)
+        data_item = self.consume_queue.get()
         return data_item
 
     def store_data_item(self, data_item):
@@ -53,8 +54,8 @@ class DataSaver(threading.Thread):
         ''' % local_dict
         try:
             local_cur.execute(insert_data)
-            self.producer_queue.put(data_item, 1)
-            self.conn.commit()
+            self.producer_queue.put(data_item)
+            self.all_post += 1
         except sqlite3.IntegrityError:
             pass
         except sqlite3.OperationalError:
@@ -62,6 +63,8 @@ class DataSaver(threading.Thread):
 
     def turn_off_connection(self):
         print 'success'
+        print 'There are ' + str(self.all_post) + ' posts.'
+        self.conn.commit()
         self.conn.close()
 
     def run(self):
