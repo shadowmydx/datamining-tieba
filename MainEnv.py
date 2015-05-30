@@ -9,8 +9,9 @@ class MainEnv:
     def __init__(self):
         pass
 
-    def run(self):
-        front_thread = StartFromNet.StartFromNet('wmydx')
-        front_thread.start()
+    @staticmethod
+    def run():
+        front_thread = StartFromNet.StartFromNet('')
+        front_thread.run()
 
-MainEnv().run()
+MainEnv.run()

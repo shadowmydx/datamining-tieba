@@ -67,6 +67,9 @@ class DataItem:
     def gen_author_from_html(self, html):
         return html.select('font.p_violet')[1].text
 
+    def get_tieba_part(self):
+        return self.result['tieba']
+
 
 if __name__ == '__main__':
     f = DataItem(r'<div class="s_post"><span class="p_title"><a class="bluelink" href="/p/3733322094?pid=67790123762&amp;cid=#67790123762" target="_blank">回复：【贴吧外交】3D海战《雷霆舰队》,欢迎太平洋战争吧吧友</a></span><div class="p_content">贵司51加班，需不需要法律服务？</div>        贴吧：<a class="p_forum" href="/f?kw=%CC%AB%C6%BD%D1%F3%D5%BD%D5%F9" target="_blank"><font class="p_violet">太平洋战争</font></a>作者：<a href="/i/sys/jump?un=wmydx" target="_blank"><font class="p_violet">wmydx</font></a><font class="p_green p_date">2015-05-01 19:49</font></div>')

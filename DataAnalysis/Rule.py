@@ -21,6 +21,7 @@ class Rules:
         self.rule_list.append(SchoolRule())
         self.rule_list.append(GradeRule())
         self.rule_list.append(PrivateRule())
+        self.rule_list.append(AccountRule())
 
     def get_rule_list(self):
         return self.rule_list
@@ -46,11 +47,13 @@ class ReRule(Rule):
         local_res = self.pattern.search(local_content['content'])
         if local_res:
             return True
-        else:
-            local_res = self.pattern.search(local_content['title'])
-            if local_res:
-                return True
-            return False
+        local_res = self.pattern.search(local_content['title'])
+        if local_res:
+            return True
+        local_res = self.pattern.search(local_content['tieba'])
+        if local_res:
+            return True
+        return False
 
 
 class StrRule(Rule):
@@ -61,11 +64,13 @@ class StrRule(Rule):
             local_res = local_content['content'].find(key)
             if local_res != -1:
                 return True
-            else:
-                local_res = local_content['title'].find(key)
-                if local_res != -1:
-                    return True
-                return False
+            local_res = local_content['title'].find(key)
+            if local_res != -1:
+                return True
+            local_res = local_content['tieba'].find(key)
+            if local_res != -1:
+                return True
+            return False
 
 
 class NumberRule(ReRule):
@@ -113,7 +118,7 @@ class UniversityRule(StrRule):
     def __init__(self):
         StrRule.__init__(self)
         self.description = 'University Rule'
-        self.pattern = [u'大学', u'考研', u'论文', u'职校', u'报考', u'高考']
+        self.pattern = [u'大学', u'考研', u'论文', u'职校', u'报考', u'高考', u'本科', u'硕士', u'博士', u'专科', u'职高']
 
 
 class SchoolRule(StrRule):
@@ -121,7 +126,7 @@ class SchoolRule(StrRule):
     def __init__(self):
         StrRule.__init__(self)
         self.description = 'School Rule'
-        self.pattern = [u'学校', u'中学', u'高中']
+        self.pattern = [u'学校', u'中学', u'高中', u'母校', u'鄙校', u'初中']
 
 
 class GradeRule(StrRule):
@@ -129,7 +134,7 @@ class GradeRule(StrRule):
     def __init__(self):
         StrRule.__init__(self)
         self.description = 'Grade Rule'
-        self.pattern = [u'大一', u'大二', u'大三', u'大四', u'高一', u'高二', u'高三']
+        self.pattern = [u'大一', u'大二', u'大三', u'大四', u'高一', u'高二', u'高三', u'初一', u'初二', u'初三']
 
 
 class PrivateRule(StrRule):
@@ -138,6 +143,14 @@ class PrivateRule(StrRule):
         StrRule.__init__(self)
         self.description = 'Private Rule'
         self.pattern = [u'求种', u'发种']
+
+
+class AccountRule(StrRule):
+
+    def __init__(self):
+        StrRule.__init__(self)
+        self.description = 'AccountRule'
+        self.pattern = [u'微博', u'微信', u'帐号', u'知乎', u'小号', u'解封', u'大号']
 
 
 def show_item(item):
@@ -150,7 +163,7 @@ if __name__ == '__main__':
     item = DataSource.DataItem.DataItem(r'<div class="s_post"><span class="p_title"><a class="bluelink" href="/p/3733322094?pid=67790123762&amp;cid=#67790123762" target="_blank">回复：【贴吧外交】3D海战《雷霆舰队》,欢迎太平洋战争吧吧友</a></span><div class="p_content">贵司51加班，需不需要法律服务？</div>        贴吧：<a class="p_forum" href="/f?kw=%CC%AB%C6%BD%D1%F3%D5%BD%D5%F9" target="_blank"><font class="p_violet">太平洋战争</font></a>作者：<a href="/i/sys/jump?un=wmydx" target="_blank"><font class="p_violet">wmydx</font></a><font class="p_green p_date">2015-05-01 19:49</font></div>')
     result = item.get_item_content()
     result['title'] = u'题目'
-    result['content'] = u'我电话是13811690862，今年大学毕业,邮箱是shadowmydx@gmail.com'
+    result['content'] = u'我电话是13dddsdsdf，今年大学毕业,邮箱是dddddd@gmail.com'
     # result['tieba'] = ''
     # result['time'] = ''
     # result['addr'] = ''
