@@ -1,9 +1,10 @@
-# -*-coding:utf8-*-
+# -*- coding: utf-8 -*-
 __author__ = 'wmydx'
 
 
 import re
 import DataSource.DataItem
+import sys
 
 
 class Rules:
@@ -70,7 +71,7 @@ class StrRule(Rule):
             # local_res = local_content['tieba'].find(key)
             # if local_res != -1:
             #     return True
-            return False
+        return False
 
 
 class NumberRule(ReRule):
@@ -159,11 +160,13 @@ def show_item(item):
     print
 
 if __name__ == '__main__':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
     test_list = Rules().get_rule_list()
     item = DataSource.DataItem.DataItem(r'<div class="s_post"><span class="p_title"><a class="bluelink" href="/p/3733322094?pid=67790123762&amp;cid=#67790123762" target="_blank">回复：【贴吧外交】3D海战《雷霆舰队》,欢迎太平洋战争吧吧友</a></span><div class="p_content">贵司51加班，需不需要法律服务？</div>        贴吧：<a class="p_forum" href="/f?kw=%CC%AB%C6%BD%D1%F3%D5%BD%D5%F9" target="_blank"><font class="p_violet">太平洋战争</font></a>作者：<a href="/i/sys/jump?un=wmydx" target="_blank"><font class="p_violet">wmydx</font></a><font class="p_green p_date">2015-05-01 19:49</font></div>')
     result = item.get_item_content()
     result['title'] = u'题目'
-    result['content'] = u'我电话是13dddsdsdf，今年大学毕业,邮箱是dddddd@gmail.com'
+    result['content'] = u'我电话是13dddsdsdf，今年大学毕业,邮箱是dddddd@gmail.com,大号是'
     # result['tieba'] = ''
     # result['time'] = ''
     # result['addr'] = ''
